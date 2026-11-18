@@ -1,0 +1,49 @@
+# One command: `make run` (or `docker compose up --build`), then open http://localhost:8080
+name: sightline
+
+services:
+  backend:
+    build:
+      context: ./backend
+      target: runtime
+    env_file:
+      - path: ./.env
+        required: false
+    environment:
+      DATABASE_URL: sqlite:////app/data/app.db
+      CORS_ORIGINS: http://localhost:8080,http://localhost:4200
+      APP_ENV: ${APP_ENV:-production}
+      # `make demo` overrides these two with "fixtures"; otherwise the value from .env (default: live) applies.
+      DATAFORSEO_MODE: ${DATAFORSEO_MODE:-live}
+      LLM_PROVIDER: ${LLM_PROVIDER:-anthropic}
+      FIXTURE_LATENCY_MS: ${FIXTURE_LATENCY_MS:-0}
+    ports:
+      - "8000:8000"   # API + docs at http://localhost:8000/api/docs, metrics at /metrics
+    volumes:
+      - backend-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=2).status == 200 else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      BACKEND_UPSTREAM: backend:8000
+      API_BASE_URL: /api/v1
+      ERROR_REPORTING: "true"
+      RUN_POLL_INTERVAL_MS: "2000"
+      RELEASE: "1.0.0"
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  backend-data:
