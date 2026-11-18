@@ -26,6 +26,21 @@ server {
         proxy_read_timeout 1h;
     }
 
+    # The API documentation page loads Swagger UI from a CDN, which the strict
+    # default policy above would block. Scoped exception, so the rest of the app
+    # keeps script-src 'self'. The raw specification stays at /api/openapi.json.
+    location = /api/docs {
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'" always;
+        proxy_pass http://${BACKEND_UPSTREAM};
+        proxy_set_header Host $host;
+    }
+
+    location = /metrics {
+        proxy_pass http://${BACKEND_UPSTREAM};
+        proxy_set_header Host $host;
+    }
+
     location /api/ {
         proxy_pass http://${BACKEND_UPSTREAM};
         proxy_set_header Host $host;

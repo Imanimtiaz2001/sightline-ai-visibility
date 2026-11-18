@@ -248,6 +248,18 @@ def test_llm_outage_falls_back_to_rules_end_to_end(client: FlaskClient, brand_id
     assert client.get(f"/api/v1/runs/{run['id']}/recommendations").json
 
 
+def test_auth_failure_is_explained_to_the_operator(settings: Settings, backend: Any) -> None:
+    """A wrong API key must not read as 'no results found'."""
+    app = _app_with(settings, SequenceTransport(httpx.Response(401)), backend)
+    client = app.test_client()
+    brand_id = client.post("/api/v1/brands", json=_brand()).json["id"]
+    run = wait_for_run(client, client.post(f"/api/v1/brands/{brand_id}/runs", json={}).json["id"])
+    assert run["status"] == "failed"
+    assert run["error"]["code"] == "auth_failed"
+    assert "DATAFORSEO_LOGIN" in run["error"]["message"]
+    app.extensions["run_service"].shutdown(wait=True)
+
+
 def test_total_provider_outage_fails_cleanly(settings: Settings, backend: Any) -> None:
     transport = SequenceTransport(httpx.Response(503))
     app = _app_with(settings, transport, backend)
@@ -255,7 +267,8 @@ def test_total_provider_outage_fails_cleanly(settings: Settings, backend: Any) -
     brand_id = client.post("/api/v1/brands", json=_brand()).json["id"]
     run = wait_for_run(client, client.post(f"/api/v1/brands/{brand_id}/runs", json={}).json["id"])
     assert run["status"] == "failed"
-    assert run["error"]["code"] == "no_measurements"
+    assert run["error"]["code"] == "transient"  # the dominant provider failure, not a vague "no results"
+    assert "could not be reached" in run["error"]["message"]
     assert any(d["kind"] == "fallback" for d in run["degradations"])  # discovery fell back to profile topics
     assert run["report"]["markdown"]  # the user still gets an explanation
     readiness = client.get("/health/ready").json

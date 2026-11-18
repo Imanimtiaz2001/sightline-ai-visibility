@@ -257,6 +257,17 @@ def overview(session: Session) -> Overview:
 
 # --- export --------------------------------------------------------------------------------------
 
+# A leading =, +, - or @ makes a spreadsheet treat the cell as a formula, so text
+# coming from the provider or the model is prefixed before it is written out.
+FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
+
+
+def csv_safe(value: object) -> object:
+    if isinstance(value, str) and value.startswith(FORMULA_PREFIXES):
+        return "'" + value
+    return value
+
+
 CSV_COLUMNS = [
     "rank",
     "query",

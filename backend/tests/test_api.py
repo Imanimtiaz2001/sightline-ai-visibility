@@ -125,3 +125,15 @@ def test_openapi_document_covers_every_operation(client: FlaskClient) -> None:
     assert {"202", "409", "422", "429"} <= set(create_run["responses"])
     assert "BrandIn" in spec["components"]["schemas"]
     assert "pipeline_node_duration_seconds" in client.get("/metrics").data.decode()
+
+
+def test_csv_export_neutralises_spreadsheet_formulas() -> None:
+    """Text from the provider or the model must not execute when the CSV is opened."""
+    from app.services.insights import csv_safe
+
+    assert csv_safe('=HYPERLINK("http://evil","click")') == '\'=HYPERLINK("http://evil","click")'
+    assert csv_safe("+1234") == "'+1234"
+    assert csv_safe("-lead") == "'-lead"
+    assert csv_safe("@sum") == "'@sum"
+    assert csv_safe("best project management software") == "best project management software"
+    assert csv_safe(42) == 42

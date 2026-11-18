@@ -149,7 +149,12 @@ DOCS_HTML = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>AI Visibility Platform API</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"></head>
-<body><div id="ui"></div>
+<body>
+<noscript><p style="font-family:system-ui;padding:2rem">This page renders the specification with JavaScript.
+The raw OpenAPI document is at <a href="/api/openapi.json">/api/openapi.json</a>.</p></noscript>
+<div id="ui"><p style="font-family:system-ui;padding:2rem;color:#555">Loading the API explorer…
+If it does not appear (no network, or a strict content policy), the raw OpenAPI document is at
+<a href="/api/openapi.json">/api/openapi.json</a>.</p></div>
 <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js" crossorigin></script>
 <script>window.ui = SwaggerUIBundle({url: '/api/openapi.json', dom_id: '#ui', deepLinking: true});</script>
 </body></html>"""

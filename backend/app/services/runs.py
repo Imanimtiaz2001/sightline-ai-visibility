@@ -8,6 +8,7 @@ with the run resource; the client follows progress through
 from __future__ import annotations
 
 import threading
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
@@ -33,6 +34,33 @@ from app.reference import get_location
 
 log = get_logger(__name__)
 ACTIVE = (RunStatus.QUEUED.value, RunStatus.RUNNING.value)
+
+# When a run measures nothing at all, the dominant provider failure is the useful
+# thing to tell the user: "no results" sends them looking in the wrong place, while
+# "the provider rejected the credentials" is immediately actionable.
+FAILURE_EXPLANATIONS = {
+    "auth_failed": "The data provider rejected the credentials. Check DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD.",
+    "quota_exhausted": "The data provider account is out of credit, so no data could be fetched.",
+    "rate_limited": "The data provider rate-limited every request. Try again in a few minutes.",
+    "circuit_open": "The data provider had been failing repeatedly, so calls were paused to let it recover.",
+    "transient": "The data provider could not be reached after several attempts.",
+    "permanent": "The data provider rejected the requests, so nothing could be measured.",
+    "budget_exceeded": "The run reached its cost limit before anything could be measured.",
+}
+
+
+def failure_reason(metrics: RunMetrics) -> dict[str, Any]:
+    """Explain a failed run from the dominant external failure, not just 'no results'."""
+    counts: Counter[str] = Counter()
+    for outcomes in metrics.summary()["api_calls"].values():
+        for code, times in outcomes.items():
+            if code not in ("ok", "cache_hit"):
+                counts[code] += times
+    if not counts:
+        return {"code": "no_measurements", "message": "No query could be measured. See the data-quality notes."}
+    code, _ = counts.most_common(1)[0]
+    fallback = "Nothing could be measured. See the data-quality notes for what failed."
+    return {"code": code, "message": FAILURE_EXPLANATIONS.get(code, fallback)}
 
 
 def snapshot(brand: Brand, question: str | None) -> dict[str, Any]:
@@ -246,7 +274,7 @@ class RunService:
             run.finished_at = utcnow()
             run.current_node = None
             if status is RunStatus.FAILED:
-                run.error = {"code": "no_measurements", "message": "No query could be measured. See degradations."}
+                run.error = failure_reason(metrics)
             session.commit()
         return status.value
 
