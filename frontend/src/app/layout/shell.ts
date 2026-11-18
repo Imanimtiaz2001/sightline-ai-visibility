@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, NavigationError, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MetaStore, PortfolioStore, ThemeService } from '../core/state/stores';
+import { ErrorReporter } from '../core/observability/error-reporter';
+import { MetaStore, PortfolioStore, ThemeService, ToastService } from '../core/state/stores';
 import { ScorePipe } from '../core/util/format';
 import { ToastHost } from '../shared/run-widgets';
 
@@ -123,10 +124,22 @@ export class Shell implements OnInit {
   protected readonly synthetic = computed(() => this.meta.meta()?.synthetic_data ?? false);
 
   constructor() {
+    // A lazy route chunk can fail to load: the user is offline, or their tab predates
+    // a deploy. Angular aborts the navigation silently, so the click looks broken.
+    // Tell the user, and report it, because missing chunks after a release are a real incident.
+    const router = inject(Router);
+    const toasts = inject(ToastService);
+    const reporter = inject(ErrorReporter);
+    router.events.pipe(filter((e): e is NavigationError => e instanceof NavigationError), takeUntilDestroyed())
+      .subscribe((e) => {
+        toasts.show('That page could not be loaded. Check your connection, then reload the app.', 'error');
+        reporter.report({ kind: 'resource', message: `navigation to ${e.url} failed: ${e.error}`, context: { url: e.url } });
+      });
+
     // Move focus to the new page for screen-reader users, but only when the path changes:
     // filters live in the query string and must not steal focus while typing.
     let lastPath = '';
-    inject(Router)
+    router
       .events.pipe(
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         takeUntilDestroyed(),

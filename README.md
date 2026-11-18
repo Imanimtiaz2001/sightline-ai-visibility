@@ -115,7 +115,7 @@ If credentials are missing, the service still starts and serves history. `/healt
 |---|---|---|
 | ![Evidence drawer](docs/screenshots/evidence.png) | ![Opportunities](docs/screenshots/opportunities.png) | ![History](docs/screenshots/history.png) |
 
-Every screen has designed loading, empty, error and partial states. Errors are explained in plain language and include a reference id (the request id) that matches the server logs.
+Every screen has designed loading, empty, error and partial states. Errors are explained in plain language and include a reference id (the request id) that matches the server logs. Two quieter failures are covered too: a refresh that fails while results are already on screen says so rather than leaving stale data looking current, and a lazy route that cannot be fetched — the user is offline, or their tab predates a deploy — raises a message and an error report instead of a click that appears to do nothing.
 
 ---
 
@@ -421,7 +421,7 @@ The tests aim at the riskiest parts of the design. **Backend: 53 tests** (`cd ba
 | `test_scoring.py` | The score is a bounded product of factors, fully visible means zero, it is monotonic in demand, gap, pressure, difficulty and intent, missing AI Overviews and failed channels are excluded, and unknown volume is flagged |
 | `test_api.py` | problem+json with field paths, cross-field rules, 415 / 404 / 409, idempotent replay with `Idempotent-Replayed`, request-id propagation, filters, facets and sorting, CSV export, recommendation workflow, query history, portfolio overview, client-error rate limit, readiness 503 when not configured, OpenAPI coverage, CSV formula injection neutralised |
 
-**Frontend: 11 tests** (`cd frontend && npx ng test --watch=false`, Vitest): `ApiError` mapping (problem+json, network, no leaked 5xx bodies), form validators (domain normalisation parity with the API, duplicate and self competitors), `RunTracker` (falls back to polling, stops at the terminal state, shares one stream), safe highlighting of AI answers (no HTML, regex-safe names), and the Markdown brief export.
+**Frontend: 15 tests** (`cd frontend && npx ng test --watch=false`, Vitest): `ApiError` mapping (problem+json, network, no leaked 5xx bodies), form validators (domain normalisation parity with the API, duplicate and self competitors), `RunTracker` (falls back to polling, stops at the terminal state, shares one stream), safe highlighting of AI answers (no HTML, regex-safe names), the Markdown brief export, and `Loadable` (first failure renders an error state, a failed *refresh* is announced instead of leaving stale data looking current, superseded requests are dropped).
 
 Static checks: `ruff` (lint and format), **`mypy --strict`** over the backend, and Angular strict templates in the production build. All of these run in **CI** (`.github/workflows/ci.yml`), which also builds both Docker images.
 
