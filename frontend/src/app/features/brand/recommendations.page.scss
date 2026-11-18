@@ -1,0 +1,137 @@
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-4);
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+
+  button {
+    border: 0;
+    background: var(--surface);
+    color: var(--ink-2);
+    padding: 8px 14px;
+    font: 600 var(--t-sm) / 1 var(--font-ui);
+    cursor: pointer;
+    border-right: 1px solid var(--line);
+    &:last-child {
+      border-right: 0;
+    }
+    &[aria-selected='true'] {
+      background: var(--ink);
+      color: var(--paper);
+      .faint {
+        color: inherit;
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+.recs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-4);
+}
+
+.rec {
+  display: grid;
+  gap: var(--s-3);
+
+  &.focused {
+    border-color: var(--signal);
+    box-shadow: 0 0 0 3px var(--signal-soft);
+  }
+  &.done h3 {
+    text-decoration: line-through;
+    text-decoration-color: var(--ink-3);
+  }
+  &.dismissed {
+    opacity: 0.7;
+  }
+}
+
+.top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--s-4);
+  align-items: start;
+
+  @media (max-width: 760px) {
+    grid-template-columns: auto 1fr;
+    .actions {
+      grid-column: 2;
+    }
+  }
+}
+
+.prio {
+  font: 600 var(--t-xl) / 1 var(--font-display);
+  color: var(--signal);
+  min-width: 1.4em;
+}
+
+.main {
+  display: grid;
+  gap: 6px;
+
+  h3 {
+    font-size: var(--t-md);
+  }
+}
+
+.chips {
+  gap: 6px;
+}
+
+.actions {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.rationale {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+
+.more {
+  justify-self: start;
+}
+
+.brief {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-5);
+  padding: var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--surface-sunk);
+  font-size: var(--t-sm);
+
+  h4 {
+    font-size: var(--t-sm);
+    margin: 0 0 var(--s-2);
+  }
+  ol,
+  ul {
+    margin: 0 0 var(--s-3);
+    padding-left: 1.2em;
+    display: grid;
+    gap: 4px;
+  }
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.brief-actions {
+  grid-column: 1 / -1;
+}

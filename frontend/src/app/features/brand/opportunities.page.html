@@ -1,0 +1,132 @@
+<div class="layout">
+  <form class="filters panel" [formGroup]="filters" (submit)="$event.preventDefault()" aria-label="Filter opportunities">
+    <div class="field">
+      <label for="search">Find a question</label>
+      <input id="search" class="input" type="search" formControlName="search" placeholder="e.g. pricing" />
+    </div>
+
+    <fieldset class="field">
+      <legend class="label">Search intent</legend>
+      <div class="row chips">
+        @for (i of intents; track i) {
+          <button type="button" class="chip" [attr.aria-pressed]="filters.controls.intent.value.includes(i)" (click)="toggleIntent(i)">
+            {{ labels.intent[i] }}
+            @if (page.value()?.facets?.intent?.[i]; as n) { <span class="num faint">{{ n }}</span> }
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <div class="field">
+      <label for="missing">Brand missing from</label>
+      <select id="missing" class="select" formControlName="missing_in">
+        <option value="">Any channel</option>
+        @for (c of channels; track c) {
+          <option [value]="c">{{ labels.channel[c] }} ({{ page.value()?.facets?.missing_in?.[c] ?? 0 }})</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="volume">Minimum monthly searches</label>
+      <select id="volume" class="select" formControlName="min_volume">
+        <option [ngValue]="0">Any</option>
+        <option [ngValue]="100">100+</option>
+        <option [ngValue]="1000">1,000+</option>
+        <option [ngValue]="10000">10,000+</option>
+      </select>
+    </div>
+
+    <label class="check">
+      <input type="checkbox" formControlName="worth_closing" />
+      Only gaps worth closing now
+    </label>
+
+    <div class="field">
+      <label for="sort">Sort by</label>
+      <select id="sort" class="select" formControlName="sort">
+        <option value="-score">Biggest opportunity</option>
+        <option value="-volume">Most searched</option>
+        <option value="visibility">Least visible</option>
+        <option value="-visibility">Most visible</option>
+      </select>
+    </div>
+
+    @if (activeFilterCount()) {
+      <button type="button" class="btn ghost sm" (click)="clear()">Clear {{ activeFilterCount() }} filter{{ activeFilterCount() === 1 ? '' : 's' }}</button>
+    }
+  </form>
+
+  <section class="results">
+    @if (page.initialLoading()) {
+      <app-state kind="loading" [lines]="8" title="Loading opportunities" />
+    } @else if (page.status() === 'error') {
+      <app-state kind="error" title="Opportunities could not be loaded" [error]="page.error()" (retry)="reload()" />
+    } @else if (page.value(); as p) {
+      <p class="count muted small" aria-live="polite">
+        {{ p.total }} question{{ p.total === 1 ? '' : 's' }}
+        @if (activeFilterCount()) { {{ p.total === 1 ? 'matches' : 'match' }} your filters } @else { measured }
+        @if (page.status() === 'loading') { <span class="faint"> – updating</span> }
+      </p>
+      @if (!p.items.length) {
+        <app-state kind="empty" title="Nothing matches these filters" message="Widen the filters to see more questions.">
+          <button actions type="button" class="btn" (click)="clear()">Clear filters</button>
+        </app-state>
+      } @else {
+        <div class="panel table-wrap scroll-x">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" class="right">#</th>
+                <th scope="col">Question</th>
+                <th scope="col">Opportunity</th>
+                <th scope="col" class="right">Searches/mo</th>
+                <th scope="col">Visible on</th>
+                <th scope="col">Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (q of p.items; track q.id) {
+                <tr class="clickable" tabindex="0" (click)="open(q)" (keydown.enter)="open(q)" [class.selected]="selectedId() === q.id">
+                  <td class="right faint num">{{ q.rank }}</td>
+                  <td class="q">
+                    <span class="text">{{ q.text }}</span>
+                    <span class="small faint">{{ q.score_breakdown.summary }}</span>
+                  </td>
+                  <td><app-score-bar [score]="q.opportunity_score" /></td>
+                  <td class="right num">{{ q.search_volume | volume }}</td>
+                  <td>
+                    <span class="dots">
+                      @for (c of channels; track c) {
+                        <span class="dot" [class]="channelState(q, c)" [title]="labels.channel[c] + ': ' + channelState(q, c)">
+                          <span class="sr-only">{{ labels.channel[c] }} {{ channelState(q, c) === 'owned' ? 'visible' : channelState(q, c) === 'missing' ? 'not visible' : 'not available' }}</span>
+                        </span>
+                      }
+                    </span>
+                    @if (q.status !== 'measured') { <span class="chip rival">{{ q.status === 'partial' ? 'Partial' : 'Failed' }}</span> }
+                  </td>
+                  <td>
+                    @if (q.analysis; as a) {
+                      <span class="chip" [class.signal]="a.worth_closing">{{ a.worth_closing ? 'Act now' : 'Skip for now' }}</span>
+                      <span class="small muted gap">{{ labels.gap[a.gap_type] }}@if (rivals(q)) { – {{ rivals(q) }} }</span>
+                    } @else {
+                      <span class="faint small">Not judged</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="legend small faint">
+          Visible on: <span class="dot owned"></span> Google search, AI Overview, AI assistants (in that order).
+          Filled = visible, outlined = missing, faint = not applicable.
+        </p>
+      }
+    }
+  </section>
+</div>
+
+@if (selectedId(); as id) {
+  <app-opportunity-drawer [queryId]="id" (close)="closeDrawer()" />
+}

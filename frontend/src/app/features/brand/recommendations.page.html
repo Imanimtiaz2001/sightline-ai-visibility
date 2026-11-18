@@ -1,0 +1,88 @@
+@if (ws.recommendations.initialLoading()) {
+  <app-state kind="loading" [lines]="6" title="Loading recommendations" />
+} @else if (ws.recommendations.status() === 'error') {
+  <app-state kind="error" title="Recommendations could not be loaded" [error]="ws.recommendations.error()" (retry)="ws.reloadRecommendations()" />
+} @else {
+  <div class="toolbar">
+    <div class="segmented" role="tablist" aria-label="Filter by status">
+      @for (v of views; track v.key) {
+        <button type="button" role="tab" [attr.aria-selected]="view() === v.key" (click)="view.set(v.key)">
+          {{ v.label }} <span class="num faint">{{ counts()[v.key] }}</span>
+        </button>
+      }
+    </div>
+    <p class="small muted">Ordered by priority: the first item closes the biggest gap.</p>
+  </div>
+
+  @if (!all().length) {
+    <app-state kind="empty" title="No recommendations in this analysis"
+               message="None of the measured gaps were judged worth closing. Check the opportunities tab for the full picture." />
+  } @else if (!visible().length) {
+    <app-state kind="empty" [title]="view() === 'todo' ? 'Nothing left to do' : 'Nothing here yet'"
+               [message]="view() === 'todo' ? 'Every recommendation is done or dismissed. Re-measure to see whether visibility improved.' : 'Recommendations you move here will appear in this list.'" />
+  } @else {
+    <ol class="recs">
+      @for (r of visible(); track r.id) {
+        <li class="rec panel" [id]="'rec-' + r.id" [class.focused]="focus() === r.id" [class.done]="r.status === 'done'" [class.dismissed]="r.status === 'dismissed'">
+          <div class="top">
+            <span class="prio num" aria-label="Priority {{ r.priority }}">{{ r.priority }}</span>
+            <div class="main">
+              <h3>{{ r.title }}</h3>
+              <p class="small muted">
+                {{ labels.content[r.content_type] ?? r.content_type }} for “{{ r.query_text }}”, opportunity score {{ r.opportunity_score | score }}
+              </p>
+              <div class="row chips">
+                @for (c of r.target_channels; track c) { <span class="chip signal">{{ labels.channel[c] }}</span> }
+                <span class="chip">{{ effortLabel[r.effort] }}</span>
+                @if (r.status === 'in_progress') { <span class="chip rival">In progress</span> }
+                @if (r.source === 'rule') { <span class="chip" title="The AI strategist was unavailable">Template</span> }
+              </div>
+            </div>
+            <div class="actions">
+              @switch (r.status) {
+                @case ('open') {
+                  <button type="button" class="btn sm primary" (click)="setStatus(r, 'in_progress')" [disabled]="pending().has(r.id)">Start</button>
+                  <button type="button" class="btn sm ghost" (click)="setStatus(r, 'dismissed')" [disabled]="pending().has(r.id)">Dismiss</button>
+                }
+                @case ('in_progress') {
+                  <button type="button" class="btn sm primary" (click)="setStatus(r, 'done')" [disabled]="pending().has(r.id)">Mark done</button>
+                  <button type="button" class="btn sm ghost" (click)="setStatus(r, 'open')" [disabled]="pending().has(r.id)">Back to to-do</button>
+                }
+                @default {
+                  <button type="button" class="btn sm ghost" (click)="setStatus(r, 'open')" [disabled]="pending().has(r.id)">Reopen</button>
+                }
+              }
+            </div>
+          </div>
+
+          <p class="rationale">{{ r.rationale }}</p>
+
+          <button type="button" class="btn ghost sm more" (click)="toggle(r.id)" [attr.aria-expanded]="expanded().has(r.id)">
+            {{ expanded().has(r.id) ? 'Hide the brief' : 'Show the brief' }}
+          </button>
+          @if (expanded().has(r.id)) {
+            <div class="brief">
+              <div>
+                <h4>Outline</h4>
+                <ol>@for (h of r.outline; track $index) { <li>{{ h }}</li> }</ol>
+              </div>
+              <div>
+                <h4>Must cover</h4>
+                <ul>@for (p of r.key_points; track $index) { <li>{{ p }}</li> }</ul>
+                @if (r.sources_to_earn.length) {
+                  <h4>Get mentioned on</h4>
+                  <p class="small muted">These sites are already cited by Google or AI assistants for this question.</p>
+                  <div class="row">@for (d of r.sources_to_earn; track d) { <span class="chip">{{ d }}</span> }</div>
+                }
+              </div>
+              <div class="row brief-actions">
+                <button type="button" class="btn sm" (click)="copy(r)">Copy brief</button>
+                <button type="button" class="btn sm" (click)="download(r)">Download brief</button>
+              </div>
+            </div>
+          }
+        </li>
+      }
+    </ol>
+  }
+}

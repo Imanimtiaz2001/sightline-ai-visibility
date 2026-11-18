@@ -1,0 +1,175 @@
+<div class="scrim" (click)="close.emit()" aria-hidden="true"></div>
+<aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  @if (detail.initialLoading()) {
+    <app-state kind="loading" [lines]="8" title="Loading evidence" />
+  } @else if (detail.status() === 'error') {
+    <app-state kind="error" title="The evidence for this question could not be loaded" [error]="detail.error()" (retry)="reload()">
+      <button actions type="button" class="btn ghost" (click)="close.emit()">Close</button>
+    </app-state>
+  } @else if (detail.value(); as q) {
+    <header class="head">
+      <div>
+        <h2 id="drawer-title">{{ q.text }}</h2>
+        <p class="small muted">Asked AI assistants: “{{ q.prompt }}”</p>
+        <div class="row chips">
+          <span class="chip num">{{ q.search_volume | volume }} searches/mo</span>
+          @if (q.intent) { <span class="chip">{{ labels.intent[q.intent] }}</span> }
+          @if (q.keyword_difficulty !== null) { <span class="chip num">Difficulty {{ q.keyword_difficulty }}/100</span> }
+          @if (q.status !== 'measured') { <span class="chip rival">{{ q.status === 'partial' ? 'Partly measured' : 'Not measured' }}</span> }
+        </div>
+      </div>
+      <button #closeButton type="button" class="btn ghost sm" (click)="close.emit()">Close</button>
+    </header>
+
+    <section class="block why">
+      <div class="score">
+        <span class="big num">{{ q.opportunity_score | score }}</span>
+        <span class="small muted">Opportunity<br />score, rank #{{ q.rank }}</span>
+      </div>
+      <p>{{ q.score_breakdown.summary }}</p>
+      <ul class="factors">
+        @for (f of q.score_breakdown.factors; track f.name) {
+          <li>
+            <span class="fname">{{ labels.factor[f.name] }}</span>
+            <span class="fbar" aria-hidden="true"><span [style.width.%]="f.value * 100"></span></span>
+            <span class="fval num">{{ f.value | pct }}</span>
+            <span class="fexp small muted">{{ f.explanation }}</span>
+          </li>
+        }
+      </ul>
+      <p class="small faint">Score = 100 × demand × visibility gap × competitor pressure × winnability × intent value.</p>
+    </section>
+
+    @if (q.analysis; as a) {
+      <section class="block">
+        <h3>Analyst verdict</h3>
+        <div class="row">
+          <span class="chip" [class.signal]="a.worth_closing">{{ a.worth_closing ? 'Worth closing now' : 'Not a priority' }}</span>
+          <span class="chip">{{ labels.gap[a.gap_type] }}</span>
+          <span class="chip">{{ confidenceLabel[a.confidence] }}</span>
+        </div>
+        <p>{{ a.reason }}</p>
+        <p class="small faint">{{ a.source === 'llm' ? 'Judged by the AI analyst from the measured data.' : 'Judged by rules (the AI analyst was unavailable).' }}</p>
+      </section>
+    }
+
+    <section class="block">
+      <h3>Google search</h3>
+      @if (q.channels.organic.status !== 'ok') {
+        <p class="muted">Search results could not be measured for this question.</p>
+      } @else {
+        <p>
+          @if (q.channels.organic.brand_position) {
+            {{ brandName() }} ranks <strong>#{{ q.channels.organic.brand_position }}</strong>.
+          } @else {
+            {{ brandName() }} is not in the results that were read.
+          }
+        </p>
+        <ol class="serp">
+          @for (r of q.channels.organic.top_results; track r.position) {
+            <li [class]="domainKind(r.domain)">
+              <span class="pos num">{{ r.position }}</span>
+              <span class="domain">{{ r.domain }}</span>
+              <span class="ttl small muted">{{ r.title }}</span>
+            </li>
+          }
+        </ol>
+      }
+    </section>
+
+    <section class="block">
+      <h3>Google AI Overview</h3>
+      @if (q.channels.ai_overview.status !== 'ok') {
+        <p class="muted">Not measured.</p>
+      } @else if (!q.channels.ai_overview.present) {
+        <p class="muted">Google showed no AI Overview for this question, so it does not count towards visibility.</p>
+      } @else {
+        <p>
+          {{ q.channels.ai_overview.brand_cited ? brandName() + ' is cited.' : q.channels.ai_overview.brand_mentioned ? brandName() + ' is mentioned but not cited.' : brandName() + ' is not cited.' }}
+          @if (q.channels.ai_overview.competitors_cited.length) { Competitors present: {{ q.channels.ai_overview.competitors_cited.join(', ') }}. }
+        </p>
+        <ul class="domains">
+          @for (ref of q.channels.ai_overview.references; track ref.url) {
+            <li [class]="domainKind(ref.domain)"><a [href]="ref.url" target="_blank" rel="noopener noreferrer">{{ ref.domain }}</a></li>
+          }
+        </ul>
+      }
+    </section>
+
+    @for (e of q.channels.ai_engines; track e.engine) {
+      <section class="block">
+        <h3>{{ engineLabel(e.engine) }} <span class="faint small">{{ e.model }}</span></h3>
+        @if (e.status !== 'ok') {
+          <p class="muted">This assistant could not be reached during the analysis, so this channel is excluded from the score.</p>
+        } @else {
+          <p class="small">
+            <span class="chip" [class.signal]="e.brand_mentioned" [class.rival]="!e.brand_mentioned">{{ e.brand_mentioned ? 'Names ' + brandName() : 'Does not name ' + brandName() }}</span>
+            @if (e.brand_cited) { <span class="chip signal">Cites {{ brandDomain() }}</span> }
+          </p>
+          <blockquote class="answer">
+            @for (s of segments(e.excerpt); track $index) {
+              @if (s.kind === 'plain') { {{ s.text }} } @else { <mark [class]="s.kind">{{ s.text }}</mark> }
+            }
+          </blockquote>
+          @if (e.cited_domains.length) {
+            <ul class="domains">
+              @for (d of e.cited_domains; track d) {
+                <li [class]="domainKind(d)">{{ d }}</li>
+              }
+            </ul>
+          }
+        }
+      </section>
+    }
+
+    @if (q.channels.organic.people_also_ask.length) {
+      <section class="block">
+        <h3>People also ask</h3>
+        <ul class="plain">
+          @for (p of q.channels.organic.people_also_ask; track p) { <li>{{ p }}</li> }
+        </ul>
+      </section>
+    }
+
+    @if (q.history.length > 1) {
+      <section class="block">
+        <h3>Over time</h3>
+        <div class="row"><app-sparkline [values]="history()" [width]="220" [height]="44" /></div>
+        <table class="table">
+          <thead><tr><th>Measured</th><th class="right">Visibility</th><th class="right">Position</th><th class="right">AI mentions</th></tr></thead>
+          <tbody>
+            @for (h of q.history; track h.run_id) {
+              <tr>
+                <td>{{ h.measured_at | when }}</td>
+                <td class="right num">{{ h.visibility | pct }}</td>
+                <td class="right num">{{ h.organic_position ?? '–' }}</td>
+                <td class="right num">{{ h.ai_mentions }} / {{ h.ai_measured }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+    }
+
+    @if (linkedRecs().length) {
+      <section class="block">
+        <h3>Recommended content</h3>
+        <ul class="plain">
+          @for (r of linkedRecs(); track r.id) {
+            <li><a [routerLink]="['/brands', ws.brandId(), 'recommendations']" [queryParams]="{ focus: r.id }" (click)="close.emit()">{{ r.title }}</a>
+              <span class="faint small"> {{ labels.content[r.content_type] ?? r.content_type }}</span></li>
+          }
+        </ul>
+      </section>
+    }
+
+    @if (q.errors.length) {
+      <section class="block">
+        <h3>What could not be measured</h3>
+        <ul class="plain small">
+          @for (err of q.errors; track $index) { <li>{{ err.tool ?? err.stage }}: {{ err.message }}</li> }
+        </ul>
+      </section>
+    }
+  }
+</aside>

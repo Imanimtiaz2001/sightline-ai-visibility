@@ -1,0 +1,111 @@
+@if (ws.history.initialLoading()) {
+  <app-state kind="loading" [lines]="6" title="Loading history" />
+} @else if (ws.history.status() === 'error') {
+  <app-state kind="error" title="History could not be loaded" [error]="ws.history.error()" (retry)="ws.reloadBrand()" />
+} @else if (ws.history.value(); as history) {
+  <div class="grid">
+    <section class="panel">
+      <div class="panel-title"><h2>Visibility over time</h2><span class="faint small">Out of 100</span></div>
+      @if (chart().xy.length) {
+        <svg class="trend" [attr.viewBox]="'0 0 ' + chart().w + ' ' + chart().h" role="img"
+             [attr.aria-label]="'Visibility score across ' + chart().xy.length + ' analyses'">
+          @for (g of chart().grid; track g.v) {
+            <line [attr.x1]="chart().pad.l" [attr.x2]="chart().w - chart().pad.r" [attr.y1]="g.y" [attr.y2]="g.y" class="gridline" />
+            <text [attr.x]="chart().pad.l - 8" [attr.y]="g.y + 4" class="axis" text-anchor="end">{{ g.v }}</text>
+          }
+          <path [attr.d]="chart().path" class="line" />
+          @for (p of chart().xy; track p.run.id) {
+            <circle [attr.cx]="p.x" [attr.cy]="p.y" r="4" class="point"><title>{{ label(p.run) }}</title></circle>
+            <text [attr.x]="p.x" [attr.y]="p.y - 10" class="value" text-anchor="middle">{{ p.run.visibility_score | score }}</text>
+            <text [attr.x]="p.x" [attr.y]="chart().h - 8" class="axis"
+                  [attr.text-anchor]="$first && !$last ? 'start' : $last && !$first ? 'end' : 'middle'">{{ p.run.created_at | when }}</text>
+          }
+        </svg>
+      } @else {
+        <app-state kind="empty" title="No completed analyses yet" message="The trend appears after the first analysis finishes." />
+      }
+    </section>
+
+    <section class="panel">
+      <div class="panel-title"><h2>All analyses</h2><span class="faint small">{{ history.total }}</span></div>
+      <ol class="runs">
+        @for (r of history.items; track r.id) {
+          <li>
+            <div class="row between">
+              <app-run-status [status]="r.status" />
+              <span class="score num">{{ r.visibility_score | score }}</span>
+            </div>
+            <span class="small">{{ r.created_at | when }}</span>
+            @if (r.question) { <span class="small muted q">{{ r.question }}</span> }
+            <div class="row links small">
+              @if (r.status === 'succeeded' || r.status === 'partial') {
+                <a [routerLink]="['..']" [queryParams]="{ run: r.id }">View results</a>
+              }
+              <a [routerLink]="['/runs', r.id]">Run details</a>
+            </div>
+          </li>
+        }
+      </ol>
+    </section>
+  </div>
+
+  <section class="panel compare">
+    <div class="panel-title">
+      <h2>What changed</h2>
+    </div>
+    @if (completed().length < 2) {
+      <app-state kind="empty" title="Re-measure to see what changed"
+                 message="After a second analysis, this compares every question: which ones the brand gained, lost or held." />
+    } @else {
+      <div class="pickers">
+        <div class="field">
+          <label for="baseline">Compare</label>
+          <select id="baseline" class="select" (change)="pick('baseline', $event)">
+            @for (r of completed(); track r.id) {
+              <option [value]="r.id" [selected]="r.id === baselineId()">{{ label(r) }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label for="current">with</label>
+          <select id="current" class="select" (change)="pick('current', $event)">
+            @for (r of completed(); track r.id) {
+              <option [value]="r.id" [selected]="r.id === currentId()">{{ label(r) }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (comparison.initialLoading()) {
+        <app-state kind="loading" [lines]="5" />
+      } @else if (comparison.status() === 'error') {
+        <app-state kind="error" title="The comparison could not be loaded" [error]="comparison.error()" (retry)="loadComparison()" />
+      } @else if (comparison.value(); as c) {
+        <div class="summary">
+          <div><span class="big num">{{ c.current.visibility_score | score }}</span><app-delta [value]="c.visibility_delta" unit=" pts" /><span class="muted small">Visibility score</span></div>
+          <div><span class="big num up">{{ c.improved }}</span><span class="muted small">Questions improved</span></div>
+          <div><span class="big num down">{{ c.declined }}</span><span class="muted small">Questions declined</span></div>
+          <div><span class="big num">{{ c.unchanged }}</span><span class="muted small">Held steady</span></div>
+        </div>
+        <div class="scroll-x">
+          <table class="table">
+            <thead>
+              <tr><th>Question</th><th>Change</th><th class="right">Visibility</th><th class="right">Google position</th><th class="right">AI mentions</th></tr>
+            </thead>
+            <tbody>
+              @for (q of c.queries; track q.text) {
+                <tr>
+                  <td>{{ q.text }}</td>
+                  <td><span class="chip" [class.ok]="q.change === 'improved'" [class.danger]="q.change === 'declined'">{{ changeLabel[q.change] }}</span></td>
+                  <td class="right num">{{ q.baseline_visibility | pct }} → {{ q.current_visibility | pct }} <app-delta [value]="pctDelta(q.visibility_delta)" unit=" pts" /></td>
+                  <td class="right num">{{ q.baseline_position ?? '–' }} → {{ q.current_position ?? '–' }}</td>
+                  <td class="right num">{{ q.baseline_ai_mentions ?? '–' }} → {{ q.current_ai_mentions ?? '–' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </section>
+}
