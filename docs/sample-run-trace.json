@@ -1,0 +1,541 @@
+{
+    "run_id": "c90cf597b63c4457985aecf27829ac26",
+    "trace_id": "c90cf597b63c4457985aecf27829ac26",
+    "status": "partial",
+    "steps": [
+        {
+            "id": "528035ee5a54413996e717bcb2321e7c",
+            "node": "discovery_planner",
+            "item_key": null,
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:24.450510Z",
+            "finished_at": "2026-11-17T15:36:24.486888Z",
+            "duration_ms": 8.8,
+            "output_summary": {
+                "source": "llm",
+                "calls": [
+                    "keyword_suggestions({'seed_keyword': 'project management software', 'limit': 50})",
+                    "related_keywords({'seed_keyword': 'agency project management', 'depth': 1, 'limit': 50})",
+                    "search_volume({'keywords': ['resource planning software', 'best project management software']})"
+                ],
+                "rejected": [],
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "fff711cdf5d647d7b454eb7353fc823e",
+            "node": "discovery_retriever",
+            "item_key": null,
+            "status": "ok",
+            "attempts": 2,
+            "started_at": "2026-11-17T15:36:24.490648Z",
+            "finished_at": "2026-11-17T15:36:27.919501Z",
+            "duration_ms": 3425.9,
+            "output_summary": {
+                "calls": 3,
+                "ok": 3,
+                "failed": 0,
+                "cache_hits": 0,
+                "cost_usd": 0.0265,
+                "failure_codes": {},
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "3a8b2d1115cc4fbfb0e82988f1a5f7d2",
+            "node": "discovery_normalizer",
+            "item_key": null,
+            "status": "ok",
+            "attempts": 0,
+            "started_at": "2026-11-17T15:36:27.923361Z",
+            "finished_at": "2026-11-17T15:36:27.927257Z",
+            "duration_ms": 0.2,
+            "output_summary": {
+                "raw": 14,
+                "unique": 8,
+                "kept": 8,
+                "top": [
+                    "best project management software",
+                    "resource planning software",
+                    "project management software",
+                    "free project management software",
+                    "project management software for small business"
+                ],
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "b82d41977bcf43bfa5f67b272f9e5154",
+            "node": "measurement_planner",
+            "item_key": null,
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:27.932233Z",
+            "finished_at": "2026-11-17T15:36:27.944955Z",
+            "duration_ms": 2.5,
+            "output_summary": {
+                "source": "llm",
+                "queries": {
+                    "q1": "best project management software",
+                    "q2": "resource planning software",
+                    "q3": "project management software",
+                    "q4": "free project management software",
+                    "q5": "project management software for small business",
+                    "q6": "project management software for agencies",
+                    "q7": "agency time tracking software",
+                    "q8": "agency project management tool"
+                },
+                "calls_planned": 24,
+                "calls_completed_by_rule": 0,
+                "rejected": [],
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "a41183b495964efbb03e0cafa25c2eb1",
+            "node": "measurement_retriever",
+            "item_key": "best project management software",
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:27.948661Z",
+            "finished_at": "2026-11-17T15:36:29.374960Z",
+            "duration_ms": 1421.8,
+            "output_summary": {
+                "calls": 3,
+                "ok": 3,
+                "failed": 0,
+                "cache_hits": 0,
+                "cost_usd": 0.0477,
+                "failure_codes": {},
+                "query": "best project management software",
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "924fa267cc954c1faa1f08f9e398252a",
+            "node": "measurement_retriever",
+            "item_key": "resource planning software",
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:27.950365Z",
+            "finished_at": "2026-11-17T15:36:30.064396Z",
+            "duration_ms": 2099.5,
+            "output_summary": {
+                "calls": 3,
+                "ok": 3,
+                "failed": 0,
+                "cache_hits": 0,
+                "cost_usd": 0.0477,
+                "failure_codes": {},
+                "query": "resource planning software",
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "a6d838edfef24caa925fe9ef8fb8d4c1",
+            "node": "measurement_retriever",
+            "item_key": "project management software",
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:27.951045Z",
+            "finished_at": "2026-11-17T15:36:32.892468Z",
+            "duration_ms": 4880.5,
+            "output_summary": {
+                "calls": 3,
+                "ok": 3,
+                "failed": 0,
+                "cache_hits": 0,
+                "cost_usd": 0.0477,
+                "failure_codes": {},
+                "query": "project management software",
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "0c84133815ea4f5d9262e248e1074201",
+            "node": "measurement_retriever",
+            "item_key": "free project management software",
+            "status": "degraded",
+            "attempts": 4,
+            "started_at": "2026-11-17T15:36:27.953212Z",
+            "finished_at": "2026-11-17T15:36:37.870102Z",
+            "duration_ms": 9900.2,
+            "output_summary": {
+                "calls": 3,
+                "ok": 2,
+                "failed": 1,
+                "cache_hits": 0,
+                "cost_usd": 0.0256,
+                "failure_codes": {
+                    "transient": 1
+                },
+                "query": "free project management software",
+                "degradations": [
+                    "Perplexity unavailable for 'free project management software': the provider kept failing after 4 attempts"
+                ]
+            },
+            "error": null
+        },
+        {
+            "id": "096b2e9405284b56b0cb98646e53a835",
+            "node": "measurement_retriever",
+            "item_key": "project management software for small business",
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:27.959980Z",
+            "finished_at": "2026-11-17T15:36:31.474815Z",
+            "duration_ms": 3479.3,
+            "output_summary": {
+                "calls": 3,
+                "ok": 3,
+                "failed": 0,
+                "cache_hits": 0,
+                "cost_usd": 0.0477,
+                "failure_codes": {},
+                "query": "project management software for small business",
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "2834f915261b44cd8b81af8d8bdb451f",
+            "node": "measurement_retriever",
+            "item_key": "project management software for agencies",
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:27.961567Z",
+            "finished_at": "2026-11-17T15:36:30.778964Z",
+            "duration_ms": 2799.9,
+            "output_summary": {
+                "calls": 3,
+                "ok": 3,
+                "failed": 0,
+                "cache_hits": 0,
+                "cost_usd": 0.0477,
+                "failure_codes": {},
+                "query": "project management software for agencies",
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "fdf2033bd260496b911a2f416816c5fb",
+            "node": "measurement_retriever",
+            "item_key": "agency time tracking software",
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:29.377950Z",
+            "finished_at": "2026-11-17T15:36:32.882416Z",
+            "duration_ms": 3501.9,
+            "output_summary": {
+                "calls": 3,
+                "ok": 3,
+                "failed": 0,
+                "cache_hits": 0,
+                "cost_usd": 0.0477,
+                "failure_codes": {},
+                "query": "agency time tracking software",
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "97853d7ab3604317a641c831ffe142bd",
+            "node": "measurement_retriever",
+            "item_key": "agency project management tool",
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:30.071122Z",
+            "finished_at": "2026-11-17T15:36:33.575908Z",
+            "duration_ms": 3498.6,
+            "output_summary": {
+                "calls": 3,
+                "ok": 3,
+                "failed": 0,
+                "cache_hits": 0,
+                "cost_usd": 0.0477,
+                "failure_codes": {},
+                "query": "agency project management tool",
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "99c337c60d054db6b562eca615510ab3",
+            "node": "measurement_normalizer",
+            "item_key": null,
+            "status": "degraded",
+            "attempts": 0,
+            "started_at": "2026-11-17T15:36:37.885894Z",
+            "finished_at": "2026-11-17T15:36:37.896390Z",
+            "duration_ms": 3.9,
+            "output_summary": {
+                "measured": 7,
+                "partial": 1,
+                "failed": 0,
+                "parse_failures": 0,
+                "degradations": [
+                    "1 question was only partly measured; missing channels are excluded from their scores"
+                ]
+            },
+            "error": null
+        },
+        {
+            "id": "97e89f07565e40a69c75575e5a689fff",
+            "node": "scorer",
+            "item_key": null,
+            "status": "ok",
+            "attempts": 0,
+            "started_at": "2026-11-17T15:36:37.901823Z",
+            "finished_at": "2026-11-17T15:36:37.910240Z",
+            "duration_ms": 0.4,
+            "output_summary": {
+                "measurable": 8,
+                "ranking": [
+                    [
+                        "q4",
+                        "free project management software",
+                        53.6
+                    ],
+                    [
+                        "q7",
+                        "agency time tracking software",
+                        51.6
+                    ],
+                    [
+                        "q2",
+                        "resource planning software",
+                        44.8
+                    ],
+                    [
+                        "q1",
+                        "best project management software",
+                        39.6
+                    ],
+                    [
+                        "q5",
+                        "project management software for small business",
+                        34.1
+                    ],
+                    [
+                        "q3",
+                        "project management software",
+                        28.4
+                    ],
+                    [
+                        "q6",
+                        "project management software for agencies",
+                        8.0
+                    ],
+                    [
+                        "q8",
+                        "agency project management tool",
+                        0.0
+                    ]
+                ],
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "22036142b4ab47b6b4ea2ccf53ed6a1d",
+            "node": "gap_analyst",
+            "item_key": null,
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:37.913561Z",
+            "finished_at": "2026-11-17T15:36:37.920585Z",
+            "duration_ms": 1.9,
+            "output_summary": {
+                "source": "llm",
+                "repair_turns": 0,
+                "filled_by_rule": [],
+                "worth_closing": 6,
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "4172adf155494218be475cf91d06b39b",
+            "node": "recommender",
+            "item_key": null,
+            "status": "ok",
+            "attempts": 1,
+            "started_at": "2026-11-17T15:36:37.934279Z",
+            "finished_at": "2026-11-17T15:36:37.943389Z",
+            "duration_ms": 3.9,
+            "output_summary": {
+                "source": "llm",
+                "repair_turns": 0,
+                "count": 5,
+                "degradations": []
+            },
+            "error": null
+        },
+        {
+            "id": "57d9d1320ace427f983aa76104f04f4e",
+            "node": "reporter",
+            "item_key": null,
+            "status": "ok",
+            "attempts": 0,
+            "started_at": "2026-11-17T15:36:37.946754Z",
+            "finished_at": "2026-11-17T15:36:37.950013Z",
+            "duration_ms": 0.2,
+            "output_summary": {
+                "visibility_score": 29.0,
+                "opportunities": 8,
+                "recommendations": 5,
+                "complete": false,
+                "degradations": []
+            },
+            "error": null
+        }
+    ],
+    "metrics": {
+        "nodes": {
+            "discovery_planner": {
+                "executions": 1,
+                "total_ms": 8.8,
+                "max_ms": 8.8,
+                "outcomes": {
+                    "ok": 1
+                },
+                "success_rate": 1.0
+            },
+            "discovery_retriever": {
+                "executions": 1,
+                "total_ms": 3425.9,
+                "max_ms": 3425.9,
+                "outcomes": {
+                    "ok": 1
+                },
+                "success_rate": 1.0
+            },
+            "discovery_normalizer": {
+                "executions": 1,
+                "total_ms": 0.2,
+                "max_ms": 0.2,
+                "outcomes": {
+                    "ok": 1
+                },
+                "success_rate": 1.0
+            },
+            "measurement_planner": {
+                "executions": 1,
+                "total_ms": 2.5,
+                "max_ms": 2.5,
+                "outcomes": {
+                    "ok": 1
+                },
+                "success_rate": 1.0
+            },
+            "measurement_retriever": {
+                "executions": 8,
+                "total_ms": 31581.7,
+                "max_ms": 9900.2,
+                "outcomes": {
+                    "ok": 7,
+                    "degraded": 1
+                },
+                "success_rate": 0.875
+            },
+            "measurement_normalizer": {
+                "executions": 1,
+                "total_ms": 3.9,
+                "max_ms": 3.9,
+                "outcomes": {
+                    "degraded": 1
+                },
+                "success_rate": 0.0
+            },
+            "scorer": {
+                "executions": 1,
+                "total_ms": 0.4,
+                "max_ms": 0.4,
+                "outcomes": {
+                    "ok": 1
+                },
+                "success_rate": 1.0
+            },
+            "gap_analyst": {
+                "executions": 1,
+                "total_ms": 1.9,
+                "max_ms": 1.9,
+                "outcomes": {
+                    "ok": 1
+                },
+                "success_rate": 1.0
+            },
+            "recommender": {
+                "executions": 1,
+                "total_ms": 3.9,
+                "max_ms": 3.9,
+                "outcomes": {
+                    "ok": 1
+                },
+                "success_rate": 1.0
+            },
+            "reporter": {
+                "executions": 1,
+                "total_ms": 0.2,
+                "max_ms": 0.2,
+                "outcomes": {
+                    "ok": 1
+                },
+                "success_rate": 1.0
+            }
+        },
+        "api_calls": {
+            "llm.discovery_planner": {
+                "ok": 1
+            },
+            "labs.keyword_suggestions": {
+                "rate_limited": 1,
+                "ok": 1
+            },
+            "keywords.search_volume": {
+                "ok": 1
+            },
+            "labs.related_keywords": {
+                "ok": 1
+            },
+            "llm.measurement_planner": {
+                "ok": 1
+            },
+            "serp.google_organic": {
+                "ok": 8,
+                "transient": 1
+            },
+            "ai.chat_gpt": {
+                "ok": 8
+            },
+            "ai.perplexity": {
+                "ok": 7,
+                "transient": 4
+            },
+            "llm.gap_analyst": {
+                "ok": 1
+            },
+            "llm.recommender": {
+                "ok": 1
+            }
+        },
+        "api_calls_total": 36,
+        "retries": 5,
+        "cache_hits": 0,
+        "cost_usd": 0.386,
+        "llm_tokens": {
+            "input_tokens": 3600,
+            "output_tokens": 1400
+        }
+    },
+    "log_query": "trace_id=\"c90cf597b63c4457985aecf27829ac26\""
+}
