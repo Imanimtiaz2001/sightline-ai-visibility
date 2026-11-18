@@ -6,7 +6,7 @@ Sightline shows a marketer where their brand appears in **Google search**, **Goo
 - **Frontend:** Angular 22 (standalone components, strict TypeScript, signals and RxJS, Reactive Forms, lazy routes), with its own design system and no component library.
 - **Run it:** `make run` (Docker Compose), then open **http://localhost:8080**.
 
-**Walkthrough video (4 min):** [docs/walkthrough.mp4](docs/walkthrough.mp4)
+**Walkthrough video (4 min):** [watch on Google Drive](https://drive.google.com/file/d/1Zv0Woj8qh29FnT5OIGII_r0wnGvHHYGD/view) — also in this repository at [docs/walkthrough.mp4](docs/walkthrough.mp4)
 
 ![Overview](docs/screenshots/overview.png)
 
