@@ -1,0 +1,46 @@
+[project]
+name = "ai-visibility-backend"
+version = "1.0.0"
+description = "AI visibility research pipeline and API (Flask + LangGraph + DataForSEO)"
+requires-python = ">=3.12"
+authors = [{ name = "Iman Imtiaz" }]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "S", "PL", "C4"]
+ignore = [
+  "RUF001", "RUF002", "RUF003", # en-dashes and typographic quotes in user-facing text are intentional
+  "PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR2004", # domain logic reads better without artificial splitting
+  "S101", # asserts are used for invariants and in tests
+  "PLC0415", # deliberate lazy imports (optional SDKs, composition root)
+  "B008",
+  "E501", # the formatter owns line length; long user-facing strings stay unbroken
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "PLR2004", "E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app", "tests"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+exclude = ["tests/"]
+
+[[tool.mypy.overrides]]
+module = ["langgraph.*", "langchain_core.*", "prometheus_client.*"]
+follow_imports = "skip"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["app"]
