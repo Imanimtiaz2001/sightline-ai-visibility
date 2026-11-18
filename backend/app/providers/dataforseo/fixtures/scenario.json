@@ -1,0 +1,713 @@
+{
+ "_comment": "SYNTHETIC data for automated tests and offline demos only. Fictional brands. Never used unless DATAFORSEO_MODE=fixtures.",
+ "brand": {
+  "name": "Tasklane",
+  "domain": "tasklane.io"
+ },
+ "competitors": [
+  {
+   "name": "Boardwise",
+   "domain": "boardwise.com"
+  },
+  {
+   "name": "Sprintloop",
+   "domain": "sprintloop.io"
+  },
+  {
+   "name": "Planfield",
+   "domain": "planfield.com"
+  }
+ ],
+ "filler_domains": [
+  "g2.com",
+  "capterra.com",
+  "forbes.com",
+  "zapier.com",
+  "pcmag.com",
+  "techradar.com",
+  "reddit.com",
+  "hubspot.com",
+  "atlassian.com",
+  "zdnet.com",
+  "softwareadvice.com",
+  "getapp.com",
+  "nerdwallet.com",
+  "investopedia.com",
+  "monday.com"
+ ],
+ "keywords": [
+  {
+   "keyword": "project management software",
+   "volume": 74000,
+   "kd": 88,
+   "intent": "commercial",
+   "cpc": 21.4,
+   "competition": 0.62,
+   "serp": {
+    "brand": null,
+    "competitors": {
+     "Boardwise": 2,
+     "Sprintloop": 5,
+     "Planfield": 9
+    },
+    "aio": {
+     "cites": [
+      "boardwise.com",
+      "g2.com",
+      "forbes.com"
+     ],
+     "mentions": [
+      "Boardwise",
+      "Sprintloop"
+     ]
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Boardwise",
+      "Sprintloop",
+      "Planfield"
+     ],
+     "cites": [
+      "g2.com",
+      "forbes.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Boardwise",
+      "Planfield"
+     ],
+     "cites": [
+      "capterra.com",
+      "boardwise.com"
+     ]
+    }
+   }
+  },
+  {
+   "keyword": "best project management software",
+   "volume": 33100,
+   "kd": 82,
+   "intent": "commercial",
+   "cpc": 24.9,
+   "competition": 0.71,
+   "serp": {
+    "brand": 14,
+    "competitors": {
+     "Boardwise": 1,
+     "Sprintloop": 3
+    },
+    "aio": {
+     "cites": [
+      "g2.com",
+      "capterra.com",
+      "sprintloop.io"
+     ],
+     "mentions": [
+      "Sprintloop",
+      "Boardwise"
+     ]
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Boardwise",
+      "Sprintloop"
+     ],
+     "cites": [
+      "g2.com",
+      "zapier.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Sprintloop",
+      "Tasklane"
+     ],
+     "cites": [
+      "tasklane.io",
+      "reddit.com"
+     ]
+    }
+   },
+   "after": {
+    "serp": {
+     "brand": 7,
+     "competitors": {
+      "Boardwise": 1,
+      "Sprintloop": 3
+     },
+     "aio": {
+      "cites": [
+       "g2.com",
+       "capterra.com",
+       "sprintloop.io"
+      ],
+      "mentions": [
+       "Sprintloop",
+       "Boardwise"
+      ]
+     }
+    },
+    "ai": {
+     "chat_gpt": {
+      "mentions": [
+       "Boardwise",
+       "Sprintloop",
+       "Tasklane"
+      ],
+      "cites": [
+       "g2.com",
+       "tasklane.io"
+      ]
+     },
+     "perplexity": {
+      "mentions": [
+       "Sprintloop",
+       "Tasklane"
+      ],
+      "cites": [
+       "tasklane.io",
+       "reddit.com"
+      ]
+     }
+    }
+   }
+  },
+  {
+   "keyword": "project management software for agencies",
+   "volume": 2400,
+   "kd": 41,
+   "intent": "commercial",
+   "cpc": 18.2,
+   "competition": 0.48,
+   "serp": {
+    "brand": 3,
+    "competitors": {
+     "Planfield": 6
+    },
+    "aio": {
+     "cites": [
+      "tasklane.io",
+      "g2.com"
+     ],
+     "mentions": [
+      "Tasklane",
+      "Planfield"
+     ]
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Tasklane",
+      "Planfield"
+     ],
+     "cites": [
+      "tasklane.io",
+      "g2.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Tasklane",
+      "Planfield"
+     ],
+     "cites": [
+      "tasklane.io"
+     ]
+    }
+   }
+  },
+  {
+   "keyword": "agency project management tool",
+   "volume": 1300,
+   "kd": 35,
+   "intent": "commercial",
+   "cpc": 15.1,
+   "competition": 0.44,
+   "serp": {
+    "brand": 1,
+    "competitors": {
+     "Sprintloop": 8
+    },
+    "aio": null
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Tasklane",
+      "Sprintloop"
+     ],
+     "cites": [
+      "tasklane.io"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Tasklane"
+     ],
+     "cites": [
+      "tasklane.io",
+      "capterra.com"
+     ]
+    }
+   }
+  },
+  {
+   "keyword": "free project management software",
+   "volume": 18100,
+   "kd": 74,
+   "intent": "transactional",
+   "cpc": 9.8,
+   "competition": 0.55,
+   "serp": {
+    "brand": null,
+    "competitors": {
+     "Boardwise": 1,
+     "Planfield": 4
+    },
+    "aio": {
+     "cites": [
+      "boardwise.com",
+      "zapier.com",
+      "pcmag.com"
+     ],
+     "mentions": [
+      "Boardwise",
+      "Planfield"
+     ]
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Boardwise",
+      "Planfield"
+     ],
+     "cites": [
+      "zapier.com",
+      "pcmag.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Boardwise",
+      "Planfield"
+     ],
+     "cites": [
+      "pcmag.com"
+     ]
+    }
+   },
+   "faults": {
+    "serp.google_organic": [
+     "http_500"
+    ],
+    "ai.perplexity": [
+     "dfs_50301",
+     "dfs_50301",
+     "dfs_50301",
+     "dfs_50301"
+    ]
+   }
+  },
+  {
+   "keyword": "project management software for small business",
+   "volume": 6600,
+   "kd": 58,
+   "intent": "commercial",
+   "cpc": 17.3,
+   "competition": 0.58,
+   "serp": {
+    "brand": 8,
+    "competitors": {
+     "Sprintloop": 2,
+     "Boardwise": 4
+    },
+    "aio": {
+     "cites": [
+      "sprintloop.io",
+      "nerdwallet.com",
+      "forbes.com"
+     ],
+     "mentions": [
+      "Sprintloop"
+     ]
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Sprintloop",
+      "Boardwise"
+     ],
+     "cites": [
+      "forbes.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Sprintloop",
+      "Tasklane"
+     ],
+     "cites": [
+      "sprintloop.io",
+      "tasklane.io"
+     ]
+    }
+   },
+   "after": {
+    "serp": {
+     "brand": 6,
+     "competitors": {
+      "Sprintloop": 2,
+      "Boardwise": 4
+     },
+     "aio": {
+      "cites": [
+       "sprintloop.io",
+       "tasklane.io",
+       "forbes.com"
+      ],
+      "mentions": [
+       "Sprintloop",
+       "Tasklane"
+      ]
+     }
+    },
+    "ai": {
+     "chat_gpt": {
+      "mentions": [
+       "Sprintloop",
+       "Boardwise"
+      ],
+      "cites": [
+       "forbes.com"
+      ]
+     },
+     "perplexity": {
+      "mentions": [
+       "Sprintloop",
+       "Tasklane"
+      ],
+      "cites": [
+       "sprintloop.io",
+       "tasklane.io"
+      ]
+     }
+    }
+   }
+  },
+  {
+   "keyword": "how to manage client projects",
+   "volume": 880,
+   "kd": 22,
+   "intent": "informational",
+   "cpc": 4.2,
+   "competition": 0.21,
+   "serp": {
+    "brand": 6,
+    "competitors": {},
+    "aio": {
+     "cites": [
+      "hubspot.com",
+      "atlassian.com"
+     ],
+     "mentions": []
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [],
+     "cites": [
+      "hubspot.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [],
+     "cites": [
+      "atlassian.com",
+      "reddit.com"
+     ]
+    }
+   }
+  },
+  {
+   "keyword": "resource planning software",
+   "volume": 5400,
+   "kd": 47,
+   "intent": "commercial",
+   "cpc": 19.7,
+   "competition": 0.52,
+   "serp": {
+    "brand": null,
+    "competitors": {
+     "Planfield": 3
+    },
+    "aio": null
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Planfield"
+     ],
+     "cites": [
+      "softwareadvice.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Planfield",
+      "Boardwise"
+     ],
+     "cites": [
+      "planfield.com",
+      "getapp.com"
+     ]
+    }
+   }
+  },
+  {
+   "keyword": "boardwise alternatives",
+   "volume": 1900,
+   "kd": 30,
+   "intent": "commercial",
+   "cpc": 12.5,
+   "competition": 0.39,
+   "serp": {
+    "brand": 12,
+    "competitors": {
+     "Boardwise": 1,
+     "Sprintloop": 4,
+     "Planfield": 7
+    },
+    "aio": {
+     "cites": [
+      "g2.com",
+      "sprintloop.io"
+     ],
+     "mentions": [
+      "Sprintloop",
+      "Planfield"
+     ]
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Sprintloop",
+      "Planfield"
+     ],
+     "cites": [
+      "g2.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Sprintloop",
+      "Tasklane"
+     ],
+     "cites": [
+      "tasklane.io",
+      "g2.com"
+     ]
+    }
+   },
+   "after": {
+    "serp": {
+     "brand": 4,
+     "competitors": {
+      "Boardwise": 1,
+      "Sprintloop": 3,
+      "Planfield": 7
+     },
+     "aio": {
+      "cites": [
+       "g2.com",
+       "sprintloop.io",
+       "tasklane.io"
+      ],
+      "mentions": [
+       "Sprintloop",
+       "Tasklane"
+      ]
+     }
+    },
+    "ai": {
+     "chat_gpt": {
+      "mentions": [
+       "Sprintloop",
+       "Tasklane",
+       "Planfield"
+      ],
+      "cites": [
+       "g2.com",
+       "tasklane.io"
+      ]
+     },
+     "perplexity": {
+      "mentions": [
+       "Sprintloop",
+       "Tasklane"
+      ],
+      "cites": [
+       "tasklane.io",
+       "g2.com"
+      ]
+     }
+    }
+   }
+  },
+  {
+   "keyword": "gantt chart software",
+   "volume": 9900,
+   "kd": 63,
+   "intent": "commercial",
+   "cpc": 14.0,
+   "competition": 0.5,
+   "serp": {
+    "brand": null,
+    "competitors": {
+     "Boardwise": 6
+    },
+    "aio": {
+     "cites": [
+      "techradar.com",
+      "boardwise.com"
+     ],
+     "mentions": [
+      "Boardwise"
+     ]
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Boardwise"
+     ],
+     "cites": [
+      "techradar.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Boardwise"
+     ],
+     "cites": []
+    }
+   }
+  },
+  {
+   "keyword": "client portal for agencies",
+   "volume": 720,
+   "kd": 18,
+   "intent": "commercial",
+   "cpc": 11.3,
+   "competition": 0.33,
+   "serp": {
+    "brand": 5,
+    "competitors": {},
+    "aio": null
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [],
+     "cites": [
+      "zapier.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [],
+     "cites": [
+      "reddit.com"
+     ]
+    }
+   }
+  },
+  {
+   "keyword": "agency time tracking software",
+   "volume": 1600,
+   "kd": 39,
+   "intent": "commercial",
+   "cpc": 13.6,
+   "competition": 0.46,
+   "serp": {
+    "brand": 18,
+    "competitors": {
+     "Sprintloop": 2
+    },
+    "aio": {
+     "cites": [
+      "sprintloop.io",
+      "getapp.com"
+     ],
+     "mentions": [
+      "Sprintloop"
+     ]
+    }
+   },
+   "ai": {
+    "chat_gpt": {
+     "mentions": [
+      "Sprintloop"
+     ],
+     "cites": [
+      "getapp.com"
+     ]
+    },
+    "perplexity": {
+     "mentions": [
+      "Sprintloop"
+     ],
+     "cites": [
+      "sprintloop.io"
+     ]
+    }
+   },
+   "after": {
+    "serp": {
+     "brand": null,
+     "competitors": {
+      "Sprintloop": 2
+     },
+     "aio": {
+      "cites": [
+       "sprintloop.io",
+       "getapp.com"
+      ],
+      "mentions": [
+       "Sprintloop"
+      ]
+     }
+    },
+    "ai": {
+     "chat_gpt": {
+      "mentions": [
+       "Sprintloop"
+      ],
+      "cites": [
+       "getapp.com"
+      ]
+     },
+     "perplexity": {
+      "mentions": [
+       "Sprintloop"
+      ],
+      "cites": [
+       "sprintloop.io"
+      ]
+     }
+    }
+   }
+  }
+ ],
+ "discovery_faults": {
+  "labs.keyword_suggestions": [
+   "dfs_40202"
+  ]
+ }
+}
