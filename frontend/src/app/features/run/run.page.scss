@@ -1,0 +1,79 @@
+.back {
+  display: inline-block;
+  margin-bottom: var(--s-2);
+  font-weight: 600;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: var(--s-5);
+  align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.h {
+  font-size: var(--t-md);
+  margin-bottom: var(--s-5);
+}
+
+.side {
+  display: grid;
+  gap: var(--s-5);
+}
+
+.calm,
+.outcome {
+  display: grid;
+  gap: var(--s-3);
+  justify-items: start;
+}
+
+.calm .h {
+  margin-bottom: 0;
+}
+
+.outcome {
+  border-top: 4px solid var(--ok);
+
+  &.partial {
+    border-top-color: var(--rival);
+  }
+  &.failed {
+    border-top-color: var(--danger);
+  }
+  h2 {
+    font-size: var(--t-lg);
+  }
+}
+
+.tech {
+  font-size: var(--t-sm);
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px var(--s-3);
+    margin: var(--s-4) 0;
+  }
+  dt {
+    color: var(--ink-3);
+  }
+  dd {
+    margin: 0;
+    word-break: break-all;
+  }
+}

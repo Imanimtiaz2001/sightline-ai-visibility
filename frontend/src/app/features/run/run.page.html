@@ -1,0 +1,88 @@
+<div class="page">
+  @if (error() && !run()) {
+    <app-state kind="error" title="This analysis could not be loaded" [error]="error()" (retry)="follow(id())">
+      <a actions class="btn ghost" routerLink="/">Back to portfolio</a>
+    </app-state>
+  } @else if (!run()) {
+    <app-state kind="loading" [lines]="8" title="Loading analysis" />
+  } @else if (run(); as r) {
+    <header class="page-head">
+      <div>
+        <a class="back small" [routerLink]="resultsLink()">{{ r.profile.name }}</a>
+        <h1>{{ terminal() ? 'Analysis finished' : 'Analysing ' + r.profile.name }}</h1>
+        <p class="sub">
+          @if (r.question) { “{{ r.question }}” } @else { Researching the whole market in {{ r.profile.location_name }}. }
+        </p>
+      </div>
+      <div class="status">
+        <app-run-status [status]="r.status" />
+        <span class="num muted">{{ elapsed() | duration }}</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <h2 class="h">Progress</h2>
+        <app-stage-timeline [stages]="r.stages" />
+      </section>
+
+      <aside class="side">
+        @if (!terminal()) {
+          <section class="panel calm">
+            <h2 class="h">You can leave this page</h2>
+            <p class="muted small">
+              The analysis keeps running on the server. Live search and AI-answer calls are slow, so a full run usually takes
+              1–3 minutes. Results appear on the brand page when it finishes.
+            </p>
+            @if (r.degradations.length) {
+              <app-data-quality [degradations]="r.degradations" />
+            }
+          </section>
+        } @else {
+          <section class="panel outcome" [class]="r.status">
+            @switch (r.status) {
+              @case ('succeeded') {
+                <h2>Everything was measured</h2>
+                <p>Visibility score <strong class="num">{{ r.visibility_score | score }}</strong> out of 100.</p>
+                <a class="btn primary" [routerLink]="resultsLink()" [queryParams]="{ run: r.id }">See the results</a>
+              }
+              @case ('partial') {
+                <h2>Results are ready, with gaps</h2>
+                <p>Visibility score <strong class="num">{{ r.visibility_score | score }}</strong> out of 100, from the parts that could be measured.</p>
+                <app-data-quality [degradations]="r.degradations" />
+                <div class="row">
+                  <a class="btn primary" [routerLink]="resultsLink()" [queryParams]="{ run: r.id }">See the results</a>
+                  <button type="button" class="btn" (click)="retry()" [disabled]="retrying()">{{ retrying() ? 'Retrying…' : 'Retry what failed' }}</button>
+                </div>
+              }
+              @default {
+                <h2>No results this time</h2>
+                <p>{{ r.error?.message ?? 'The analysis stopped before it could measure anything.' }}</p>
+                <app-data-quality [degradations]="r.degradations" />
+                <div class="row">
+                  <button type="button" class="btn primary" (click)="retry()" [disabled]="retrying()">{{ retrying() ? 'Retrying…' : 'Try again' }}</button>
+                  <a class="btn ghost" [routerLink]="resultsLink()">Back to brand</a>
+                </div>
+              }
+            }
+          </section>
+        }
+
+        <details class="panel tech">
+          <summary>Details for support</summary>
+          <dl>
+            <dt>Run id (trace id)</dt><dd class="num">{{ r.id }}</dd>
+            <dt>Started</dt><dd>{{ r.started_at ?? r.created_at | when }}</dd>
+            @if (r.retry_of_run_id) { <dt>Retry of</dt><dd><a [routerLink]="['/runs', r.retry_of_run_id]">{{ r.retry_of_run_id }}</a></dd> }
+            <dt>Data</dt><dd>{{ r.data_mode === 'live' ? 'Live DataForSEO' : 'Synthetic fixtures' }}, model {{ r.llm_model }}</dd>
+            @if (r.metrics; as m) {
+              <dt>Provider calls</dt><dd class="num">{{ m.api_calls_total }} ({{ m.cache_hits }} from cache, {{ m.retries }} retries)</dd>
+              <dt>Data cost</dt><dd class="num">${{ m.cost_usd.toFixed(4) }}</dd>
+            }
+          </dl>
+          <a class="small" [href]="traceUrl()" target="_blank" rel="noopener">Open the node-by-node trace</a>
+        </details>
+      </aside>
+    </div>
+  }
+</div>

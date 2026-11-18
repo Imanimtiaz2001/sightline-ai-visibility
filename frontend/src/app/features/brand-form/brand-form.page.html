@@ -1,0 +1,157 @@
+<div class="page narrow">
+  <header class="page-head">
+    <div>
+      <h1>{{ editing() ? 'Edit brand' : 'Add a brand' }}</h1>
+      <p class="sub">
+        Describe the brand and who it competes with. Sightline uses this to find the questions buyers ask and to
+        recognise each brand in search results and AI answers.
+      </p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <app-state kind="loading" [lines]="6" title="Loading brand" />
+  } @else if (loadError()) {
+    <app-state kind="error" title="This brand could not be loaded" [error]="loadError()" (retry)="ngOnInit()">
+      <a actions class="btn ghost" routerLink="/">Back to portfolio</a>
+    </app-state>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="form">
+      <section class="panel">
+        <h2>The brand</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="name">Brand name</label>
+            <input id="name" class="input" formControlName="name" autocomplete="organization"
+                   [class.invalid]="showError(form.controls.name)" placeholder="e.g. Tasklane" />
+            @if (showError(form.controls.name)) {
+              <span class="error">{{ form.controls.name.errors?.['server'] ?? 'Enter the name people use for the brand.' }}</span>
+            }
+          </div>
+          <div class="field">
+            <label for="domain">Website domain</label>
+            <input id="domain" class="input" formControlName="domain" inputmode="url" autocomplete="url"
+                   [class.invalid]="showError(form.controls.domain)" placeholder="tasklane.io" />
+            @if (showError(form.controls.domain)) {
+              <span class="error">{{ form.controls.domain.errors?.['server'] ?? 'Enter a domain like example.com.' }}</span>
+            } @else {
+              <span class="hint">Used to recognise the brand when Google or an AI assistant cites its pages.</span>
+            }
+          </div>
+        </div>
+        <div class="field">
+          <label for="market">Market</label>
+          <input id="market" class="input" formControlName="market" [class.invalid]="showError(form.controls.market)"
+                 placeholder="project management software for agencies" />
+          @if (showError(form.controls.market)) {
+            <span class="error">{{ form.controls.market.errors?.['server'] ?? 'Describe the category in 3–200 characters.' }}</span>
+          } @else {
+            <span class="hint">The category buyers search in. This seeds the keyword research.</span>
+          }
+        </div>
+        <div class="field">
+          <label for="description">What the brand does <span class="faint">(optional)</span></label>
+          <textarea id="description" class="textarea" formControlName="description" rows="3"
+                    placeholder="Who it is for and what makes it different."></textarea>
+        </div>
+        <div class="grid two">
+          <div class="field">
+            <label for="location">Market location</label>
+            <select id="location" class="select" formControlName="location_code">
+              @for (loc of meta.locations(); track loc.code) {
+                <option [ngValue]="loc.code">{{ loc.name }}</option>
+              } @empty {
+                <option [ngValue]="2840">United States</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label for="language">Language</label>
+            <select id="language" class="select" formControlName="language_code">
+              @for (lang of languages(); track lang.code) {
+                <option [value]="lang.code">{{ lang.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <h2>Competitors</h2>
+          <span class="faint small">{{ competitors.length }} of {{ maxCompetitors }}</span>
+        </div>
+        <p class="muted small intro">Who buyers compare the brand with. Each one is tracked in every search result and AI answer.</p>
+        <div formArrayName="competitors" class="competitors">
+          @for (row of competitors.controls; track row; let i = $index) {
+            <div class="competitor" [formGroupName]="i">
+              <div class="field">
+                <label [for]="'cn' + i" class="sr-only">Competitor {{ i + 1 }} name</label>
+                <input [id]="'cn' + i" class="input" formControlName="name" placeholder="Name"
+                       [class.invalid]="showError(row.controls.name)" />
+              </div>
+              <div class="field">
+                <label [for]="'cd' + i" class="sr-only">Competitor {{ i + 1 }} domain</label>
+                <input [id]="'cd' + i" class="input" formControlName="domain" placeholder="domain.com"
+                       [class.invalid]="showError(row.controls.domain)" />
+              </div>
+              <button type="button" class="btn ghost sm" (click)="removeCompetitor(i)" [attr.aria-label]="'Remove competitor ' + (i + 1)">Remove</button>
+              @if (showError(row.controls.name) || showError(row.controls.domain)) {
+                <span class="error span">{{ row.controls.domain.errors?.['server'] ?? 'Enter a name and a domain like rival.com.' }}</span>
+              }
+            </div>
+          }
+        </div>
+        @if (competitors.errors && competitors.touched) {
+          <p class="error small" role="alert">
+            @if (competitors.errors['ownDomain'] || competitors.errors['ownName']) { A competitor cannot be the brand itself. }
+            @if (competitors.errors['duplicateDomain'] || competitors.errors['duplicateName']) { Each competitor can be listed once. }
+          </p>
+        }
+        <button type="button" class="btn sm add" (click)="addCompetitor()" [disabled]="competitors.length >= maxCompetitors">Add competitor</button>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <h2>Topics to cover <span class="faint small">(optional)</span></h2>
+          <span class="faint small">{{ topics.length }} of {{ maxTopics }}</span>
+        </div>
+        <p class="muted small intro">Phrases you already know matter. They are always researched, even if they are niche.</p>
+        <div class="topics">
+          @for (t of topics.controls; track t; let i = $index) {
+            <span class="chip topic">{{ t.value }}
+              <button type="button" (click)="removeTopic(i)" [attr.aria-label]="'Remove ' + t.value">×</button>
+            </span>
+          }
+          <input class="input topic-input" [formControl]="topicDraft" placeholder="Type a topic and press Enter"
+                 (keydown.enter)="addTopic($event)" [attr.readonly]="topics.length >= maxTopics ? true : null" aria-label="Add a topic" />
+        </div>
+      </section>
+
+      @if (serverError(); as e) {
+        <div class="server-error" role="alert">
+          <strong>{{ e.status === 409 ? 'Already tracked' : 'Not saved' }}:</strong> {{ e.userMessage }}
+          @if (e.requestId) { <span class="faint small">Reference {{ e.requestId }}</span> }
+        </div>
+      }
+
+      <div class="actions">
+        <button type="submit" class="btn primary" [disabled]="saving()">{{ saving() ? 'Saving…' : editing() ? 'Save changes' : 'Add brand' }}</button>
+        <a class="btn ghost" [routerLink]="editing() ? ['/brands', id()] : ['/']">Cancel</a>
+        @if (editing()) {
+          <span class="spacer"></span>
+          @if (confirmDelete()) {
+            <span class="small">Delete this brand and all its history?</span>
+            <button type="button" class="btn danger sm" (click)="remove()">Delete brand</button>
+            <button type="button" class="btn ghost sm" (click)="confirmDelete.set(false)">Keep it</button>
+          } @else {
+            <button type="button" class="btn ghost danger sm" (click)="confirmDelete.set(true)">Delete brand</button>
+          }
+        }
+      </div>
+      @if (editing()) {
+        <p class="faint small">Saving changes affects future analyses only. Past results keep the profile they measured.</p>
+      }
+    </form>
+  }
+</div>
