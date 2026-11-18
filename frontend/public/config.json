@@ -1,0 +1,6 @@
+{
+  "apiBaseUrl": "/api/v1",
+  "errorReporting": true,
+  "runPollIntervalMs": 2000,
+  "release": "dev"
+}
